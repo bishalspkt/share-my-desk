@@ -1,0 +1,16 @@
+{
+  "name": "share-my-desk",
+  "version": "1.0.0",
+  "description": "Allows staff to share their desks while they are away",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "share",
+    "staff",
+    "desks"
+  ],
+  "author": "Bishal Sapkota <bishal.sapkota@deakin.edu.au>",
+  "license": "ISC"
+}
