@@ -1,0 +1,15 @@
+# Node files and logs
+node_modules/
+logs
+*.log
+npm-debug.log
+
+# vim swap files
+.sw[a-p]
+
+# vscode
+.vscode/*
+
+# OS artefacts
+.DS_Store
+thumbs.db
