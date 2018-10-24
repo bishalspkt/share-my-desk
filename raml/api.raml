@@ -2,7 +2,11 @@
 title: Share My Desk
 description: RAML spec for complete API
 version: v1
-baseUri: http://share-my-desk.expozit.com/api/v1
+baseUri: /api/v1/index
+
+/specs:
+  get:
+    description: Describes the share my desk API
 
 /signup:
   post:

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Allows staff to share their desks while they are away",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "ramldoc": "./node_modules/raml2html/bin/raml2html raml/api.raml  > raml/api.html && open raml/api.html"
   },
@@ -18,11 +18,16 @@
   "author": "Bishal Sapkota <bishal.sapkota@deakin.edu.au>",
   "license": "ISC",
   "dependencies": {
-    "async": "^2.6.1",
     "assert": "^1.4.1",
-    "winston": "^3.1.0",
+    "async": "^2.6.1",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.4",
+    "osprey": "^0.5.0",
+    "path": "^0.12.7",
     "pm2": "^3.2.2",
-    "raml2html": "^7.2.0"
+    "raml2html": "^7.2.0",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "eslint": "^5.7.0",
