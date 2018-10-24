@@ -2,6 +2,10 @@
   "name": "share-my-desk",
   "version": "1.0.0",
   "description": "Allows staff to share their desks while they are away",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bishalspkt/share-my-desk.git"
+  },
   "scripts": {
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
