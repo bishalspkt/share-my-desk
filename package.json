@@ -8,7 +8,7 @@
     "ramldoc": "./node_modules/raml2html/bin/raml2html raml/api.raml  > raml/api.html && open raml/api.html"
   },
   "engines": {
-    "node": "8.1.2"
+    "node": "10.12.0"
   },
   "keywords": [
     "share",
@@ -18,19 +18,19 @@
   "author": "Bishal Sapkota <bishal.sapkota@deakin.edu.au>",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.6.1",
     "assert": "^1.4.1",
-    "winston": "^3.1.0"
+    "winston": "^3.1.0",
+    "pm2": "^3.2.2",
+    "raml2html": "^7.2.0"
   },
   "devDependencies": {
-    "async": "^2.6.1",
     "eslint": "^5.7.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "nodemon": "^1.18.4",
-    "pm2": "^3.2.2",
-    "raml2html": "^7.2.0"
+    "nodemon": "^1.18.4"
   }
 }
