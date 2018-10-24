@@ -1,0 +1,208 @@
+#%RAML 1.0
+title: Share My Desk
+description: RAML spec for complete API
+version: v1
+baseUri: http://share-my-desk.expozit.com/api/v1
+
+/signup:
+  post:
+    description: Register for the application
+    body:
+      application/json:
+        type: |
+          {
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "id": "http://jsonschema.net",
+            "required": true,
+            "properties": {
+              "email": {
+                "type":"string",
+                "required": true,
+              },
+              "name": {
+                "type": "string",
+                "required": true
+              }
+            }
+          }
+        example: |
+          {
+            "email": "bishalsemail@example.com"
+            "name": "Bishal"
+          }
+    responses:
+      200:
+        description: Success
+        body:
+          application/json:
+            example: |
+              {
+                "success": true,
+              }
+
+      500:
+        description: Failure
+        body:
+          application/json:
+            example: |
+              {
+                "success":false,
+                "reason": "REASON FOR FAILURE"
+                "errcode": "ERRCODE"
+              }
+
+/login:
+  post:
+    description: Login to the application
+    body:
+      application/json:
+        type: |
+          {
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "id": "http://jsonschema.net",
+            "required": true,
+            "properties": {
+              "email": {
+                "type":"string",
+                "required": true,
+              },
+              "secret": {
+                "type": "string",
+                "required": true
+              }
+            }
+          }
+        example: |
+          {
+            "email": "bishalsemail@example.com"
+            "secret": "123456"
+          } 
+    responses:
+      200:
+        description: Success
+        body: 
+          application/json:
+            example: |
+              {
+                "success": true,
+              }
+      
+      500:
+        description: Failure
+        body:
+          application/json:
+            example: |
+              {
+                "success":false, "reason": "REASON FOR FAILURE"
+                "errcode": "ERRCODE"
+              }
+
+/getAvailableDesks:
+  get:
+    description: Get a list of avialable desks
+    queryParameters:
+
+      campusID:
+        displayName: Campus ID
+        description: Campus ID ex. WF, BW, WP, WB
+        type: string
+        required: true
+
+      searchDate: 
+        displayName: Search Date
+        description: Search date
+        type: string
+        required: true
+
+      showBooked:
+        displayName: Show Booked
+        description: Show the desks which are already booked
+        type: bool
+        required: false
+    
+    responses:
+      200:
+        description: Request Successful
+        body:
+          application/json:
+            example: |
+              {
+                "success":true,
+                "available_desks": []
+              }
+      500:
+        description: Failure
+        body:
+          application/json:
+            example: |
+              {
+                "success":false,
+                "reason": "REASON FOR FAILURE"
+                "errcode": "ERRCODE"
+              }
+
+/shareMyDesk:
+  post:
+    description: Share your desk availablility for given date(s)
+    body:
+      application/json:
+        type: |
+          {
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "id": "http://jsonschema.net",
+            "required": true,
+            "properties": {
+              "datesAvailable": {
+                "type":"[Date]",
+                "required": true,
+              },
+              "notes": {
+                "type": "string",
+                "required": false
+              }
+              "directions": {
+                "type": "string",
+                "required": true
+              }
+              "closest_room_name": {
+                "type": "string",
+                "required": false
+              }
+            }
+          }
+        example: |
+          {
+            "name": "Bishal"
+            "email": "bishalsemail@example.com"
+          }
+    responses:
+      200:
+        description: Request Successful
+        body:
+          application/json:
+            example: |
+              {
+                "success":true,
+              }
+      500:
+        description: Failure
+        body:
+          application/json:
+            example: |
+              {
+                "success":false,
+                "reason": "REASON FOR FAILURE"
+                "errcode": "ERRCODE"
+              }
+
+
+# To be designed
+/getMyShareHistory:
+  get:
+
+# To be designed
+/unshareDesk:
+  post:
