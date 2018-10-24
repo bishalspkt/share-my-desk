@@ -18,7 +18,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
             "properties": {
               "email": {
                 "type":"string",
-                "required": true,
+                "required": true
               },
               "name": {
                 "type": "string",
@@ -28,7 +28,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           }
         example: |
           {
-            "email": "bishalsemail@example.com"
+            "email": "bishalsemail@example.com",
             "name": "Bishal"
           }
     responses:
@@ -38,7 +38,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           application/json:
             example: |
               {
-                "success": true,
+                "success": true
               }
 
       500:
@@ -48,7 +48,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
             example: |
               {
                 "success":false,
-                "reason": "REASON FOR FAILURE"
+                "reason": "REASON FOR FAILURE",
                 "errcode": "ERRCODE"
               }
 
@@ -66,7 +66,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
             "properties": {
               "email": {
                 "type":"string",
-                "required": true,
+                "required": true
               },
               "secret": {
                 "type": "string",
@@ -76,7 +76,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           }
         example: |
           {
-            "email": "bishalsemail@example.com"
+            "email": "bishalsemail@example.com",
             "secret": "123456"
           } 
     responses:
@@ -86,7 +86,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           application/json:
             example: |
               {
-                "success": true,
+                "success": true
               }
       
       500:
@@ -95,13 +95,13 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           application/json:
             example: |
               {
-                "success":false, "reason": "REASON FOR FAILURE"
+                "success":false,
+                "reason": "REASON FOR FAILURE",
                 "errcode": "ERRCODE"
               }
 
 /getAvailableDesks:
   get:
-    description: Get a list of avialable desks
     queryParameters:
 
       campusID:
@@ -109,19 +109,16 @@ baseUri: http://share-my-desk.expozit.com/api/v1
         description: Campus ID ex. WF, BW, WP, WB
         type: string
         required: true
-
       searchDate: 
         displayName: Search Date
         description: Search date
         type: string
         required: true
-
-      showBooked:
-        displayName: Show Booked
+      showBookedDesks:
+        displayName: Show Booked Desks
         description: Show the desks which are already booked
-        type: bool
+        type: boolean
         required: false
-    
     responses:
       200:
         description: Request Successful
@@ -139,7 +136,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
             example: |
               {
                 "success":false,
-                "reason": "REASON FOR FAILURE"
+                "reason": "REASON FOR FAILURE",
                 "errcode": "ERRCODE"
               }
 
@@ -156,17 +153,17 @@ baseUri: http://share-my-desk.expozit.com/api/v1
             "required": true,
             "properties": {
               "datesAvailable": {
-                "type":"[Date]",
-                "required": true,
+                "type":"array",
+                "required": true
               },
               "notes": {
                 "type": "string",
                 "required": false
-              }
+              },
               "directions": {
                 "type": "string",
                 "required": true
-              }
+              },
               "closest_room_name": {
                 "type": "string",
                 "required": false
@@ -175,8 +172,10 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           }
         example: |
           {
-            "name": "Bishal"
-            "email": "bishalsemail@example.com"
+            "datesAvailable": ["23 Jan","24 Jan"],
+            "notes": "2 Monitors and a dock for thinkpad avaialble",
+            "directions": "Next to the kitchen in 6th floor",
+            "closest_room_name": "BIR_D"
           }
     responses:
       200:
@@ -185,7 +184,7 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           application/json:
             example: |
               {
-                "success":true,
+                "success": true
               }
       500:
         description: Failure
@@ -193,8 +192,8 @@ baseUri: http://share-my-desk.expozit.com/api/v1
           application/json:
             example: |
               {
-                "success":false,
-                "reason": "REASON FOR FAILURE"
+                "success": false,
+                "reason": "REASON FOR FAILURE",
                 "errcode": "ERRCODE"
               }
 
