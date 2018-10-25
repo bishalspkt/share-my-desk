@@ -7,7 +7,7 @@
     "url": "https://github.com/bishalspkt/share-my-desk.git"
   },
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "./node_modules/nodemon/bin/nodemon.js --config .nodemonrc index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "ramldoc": "./node_modules/raml2html/bin/raml2html raml/api.raml  > raml/api.html && open raml/api.html",
     "clean": "rm -rf node_modules; rm package-lock.json"
