@@ -2,107 +2,107 @@
 title: Share My Desk
 description: RAML spec for complete API
 version: v1
-baseUri: /api/v1/index
+baseUri: /api/v1/
 
 /specs:
   get:
     description: Describes the share my desk API
-
-/signup:
-  post:
-    description: Register for the application
-    body:
-      application/json:
-        type: |
-          {
-            "type": "object",
-            "$schema": "http://json-schema.org/draft-03/schema",
-            "id": "http://jsonschema.net",
-            "required": true,
-            "properties": {
-              "email": {
-                "type":"string",
-                "required": true
-              },
-              "name": {
-                "type": "string",
-                "required": true
+/auth:
+  /signup:
+    post:
+      description: Register for the application
+      body:
+        application/json:
+          type: |
+            {
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "id": "http://jsonschema.net",
+              "required": true,
+              "properties": {
+                "email": {
+                  "type":"string",
+                  "required": true
+                },
+                "name": {
+                  "type": "string",
+                  "required": true
+                }
               }
             }
-          }
-        example: |
-          {
-            "email": "bishalsemail@example.com",
-            "name": "Bishal"
-          }
-    responses:
-      200:
-        description: Success
-        body:
-          application/json:
-            example: |
-              {
-                "success": true
-              }
+          example: |
+            {
+              "email": "bishalsemail@example.com",
+              "name": "Bishal"
+            }
+      responses:
+        200:
+          description: Success
+          body:
+            application/json:
+              example: |
+                {
+                  "success": true
+                }
 
-      500:
-        description: Failure
-        body:
-          application/json:
-            example: |
-              {
-                "success":false,
-                "reason": "REASON FOR FAILURE",
-                "errcode": "ERRCODE"
-              }
+        500:
+          description: Failure
+          body:
+            application/json:
+              example: |
+                {
+                  "success":false,
+                  "reason": "REASON FOR FAILURE",
+                  "errcode": "ERRCODE"
+                }
 
-/login:
-  post:
-    description: Login to the application
-    body:
-      application/json:
-        type: |
-          {
-            "type": "object",
-            "$schema": "http://json-schema.org/draft-03/schema",
-            "id": "http://jsonschema.net",
-            "required": true,
-            "properties": {
-              "email": {
-                "type":"string",
-                "required": true
-              },
-              "secret": {
-                "type": "string",
-                "required": true
+  /login:
+    post:
+      description: Login to the application
+      body:
+        application/json:
+          type: |
+            {
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-03/schema",
+              "id": "http://jsonschema.net",
+              "required": true,
+              "properties": {
+                "email": {
+                  "type":"string",
+                  "required": true
+                },
+                "secret": {
+                  "type": "string",
+                  "required": true
+                }
               }
             }
-          }
-        example: |
-          {
-            "email": "bishalsemail@example.com",
-            "secret": "123456"
-          } 
-    responses:
-      200:
-        description: Success
-        body: 
-          application/json:
-            example: |
-              {
-                "success": true
-              }
-      
-      500:
-        description: Failure
-        body:
-          application/json:
-            example: |
-              {
-                "success":false,
-                "reason": "REASON FOR FAILURE",
-                "errcode": "ERRCODE"
-              }
+          example: |
+            {
+              "email": "bishalsemail@example.com",
+              "secret": "123456"
+            } 
+      responses:
+        200:
+          description: Success
+          body: 
+            application/json:
+              example: |
+                {
+                  "success": true
+                }
+        
+        500:
+          description: Failure
+          body:
+            application/json:
+              example: |
+                {
+                  "success":false,
+                  "reason": "REASON FOR FAILURE",
+                  "errcode": "ERRCODE"
+                }
 
 /getAvailableDesks:
   get:
