@@ -1,6 +1,5 @@
 "use strict";
 
-const logger = require("../lib/logger");
 const utils = require("../lib/utils");
 const httpResponseTemplates = require("../lib/httpResponseTemplates");
 const signUpService = require("../services/SignUpService");
@@ -12,9 +11,9 @@ const signUp = (req, res) => {
     const email = req.body.email;
     const name = req.body.name;
 
-    signUpService.signUp(email, name, (err) => {
-        if(utils.isNotNull(err)) {
-            httpResponseTemplates.sendFailure(res, "SIGN_UP_FAILED", "Could not complete the sign up process. Please try again later.");
+    signUpService.signUp(email, name, (ERRCODE) => {
+        if (utils.isNotNull(ERRCODE)) {
+            httpResponseTemplates.sendFailure(res, ERRCODE, "Could not complete the sign up process. Please try again later.");
             return;
         }
         httpResponseTemplates.sendSuccess(res, {});
