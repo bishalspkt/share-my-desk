@@ -15,7 +15,7 @@ const installRAMLMiddleware = (done) => {
 };
 
 const installWebServices = (server, done) => {
-    server.installApiDocs(ramlSpecPath);
+    server.installApiDocs(ramlSpecPath, "/");
     AuthWs.install(server);
     done(null, server);
 };
