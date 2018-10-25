@@ -25,6 +25,13 @@
         "semi": [
             "error",
             "always"
+        ],
+        "no-trailing-spaces": "warn",
+        "keyword-spacing": [
+            "error",
+            {
+                "before": true
+            }
         ]
     }
 }
