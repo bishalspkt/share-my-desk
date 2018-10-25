@@ -4,7 +4,8 @@ description: RAML spec for complete API
 version: v1
 baseUri: /api/v1/
 
-/specs:
+/:
+  description: Describes the share my desk API
   get:
     description: Describes the share my desk API
 /auth:
@@ -105,7 +106,9 @@ baseUri: /api/v1/
                 }
 
 /getAvailableDesks:
+  description: Returns a list of desks posted for the specified search parameters
   get:
+    description: Returns a list of desks posted for the specified search parameters
     queryParameters:
 
       campusID:
@@ -145,6 +148,7 @@ baseUri: /api/v1/
               }
 
 /shareMyDesk:
+  description: Share your desk availablility for given date(s)
   post:
     description: Share your desk availablility for given date(s)
     body:
@@ -204,8 +208,10 @@ baseUri: /api/v1/
 
 # To be designed
 /getMyShareHistory:
+  description: Returns a full history of shared occassions
   get:
 
 # To be designed
 /unshareDesk:
+  description: Undo the share of desk
   post:
