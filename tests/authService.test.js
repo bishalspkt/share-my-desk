@@ -24,6 +24,6 @@ test("Test Signup service", (done) => {
         expect(ERRCODE).toBeNull();
         expect(result).not.toBeNull();
         expect(result.secret).not.toBeNull();
-        done()
+        done();
     });
 });
