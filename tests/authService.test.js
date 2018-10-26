@@ -15,3 +15,15 @@ test("generateSecret", (done) => {
         done();
     });
 });
+
+test("Test Signup service", (done) => {
+    const userModel = require("./mocks/mockUserModel");
+    const auth = authService.authService(userModel);
+
+    auth.signUp("sample@example.com", "Sample Example",  (ERRCODE, result) => {
+        expect(ERRCODE).toBeNull();
+        expect(result).not.toBeNull();
+        expect(result.secret).not.toBeNull();
+        done()
+    });
+});
