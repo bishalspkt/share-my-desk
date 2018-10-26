@@ -13,9 +13,10 @@ const userSchema = new db.Schema({
         required: true,
         unique: true
     },
+    apiKeys: [String],
     accountInfo: {
         secret: String,
-        secret_expires: Date,
+        secretExpires: Date,
     }
 }, {timestamps: true});
 
