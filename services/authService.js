@@ -36,7 +36,7 @@ const generateSecret = (cb) => {
  * Creates an authService instance
  * @param {User} userModel db model to inject for database connectivity
  */
-exports.authService = (userModel) => { 
+exports.authService = (userModel) => {
 
     // If no model was injected, use default
     if (!userModel) {
@@ -47,7 +47,7 @@ exports.authService = (userModel) => {
     /**
      * Sign up for the API
      * Generates a secret key used to activate the user
-     * 
+     *
      * @param {String} email
      * @param {String} name
      * @param {Function} cb (err, response)
@@ -83,7 +83,7 @@ exports.authService = (userModel) => {
     /**
      * Login with the given credentials.
      * Generates API token after verification
-     * 
+     *
      * @param {String} email
      * @param {String} secret
      * @param {Function} cb(error, response)
