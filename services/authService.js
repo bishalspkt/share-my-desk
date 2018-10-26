@@ -44,6 +44,14 @@ exports.authService = (userModel) => {
     }
     const instance = {};
 
+    /**
+     * Sign up for the API
+     * Generates a secret key used to activate the user
+     * 
+     * @param {String} email
+     * @param {String} name
+     * @param {Function} cb (err, response)
+     */
     instance.signUp = (email, name, cb) => {
         if (!isEmailValid(email)) {
             return cb("INVALID_EMAIL");
@@ -72,6 +80,14 @@ exports.authService = (userModel) => {
         });
     };
 
+    /**
+     * Login with the given credentials.
+     * Generates API token after verification
+     * 
+     * @param {String} email
+     * @param {String} secret
+     * @param {Function} cb(error, response)
+     */
     instance.login = (email, secret, cb) => {
         if (!isEmailValid(email)) {
             logger.warn(`Invalid email login attempt denied. Email: ${email}`);
