@@ -1,7 +1,7 @@
 {
   "name": "share-my-desk",
   "version": "1.0.0",
-  "description": "Allows staff to share their desks while they are away",
+  "description": "Allows staffs in your office to list their desks as available while they are away for others to use",
   "repository": {
     "type": "git",
     "url": "https://github.com/bishalspkt/share-my-desk.git"
