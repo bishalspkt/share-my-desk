@@ -28,7 +28,6 @@ const isEmailValid = (email) => {
 const generateSecret = (cb) => {
     const secret = entropy.string().substring(0,6); // Get 6 char secret with high entropy
     bcrypt.hash(secret, bcryptCost, function(err, hash) {
-        logger.info(secret + " hash: " + hash);
         cb({ secret: secret, bcrypt: hash });
     });
 
