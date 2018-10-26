@@ -21,7 +21,7 @@
     "desks"
   ],
   "author": "Bishal Sapkota <bishal.sapkota@deakin.edu.au>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "assert": "^1.4.1",
     "async": "^2.6.1",
