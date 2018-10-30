@@ -2,6 +2,7 @@
 
 var db = require("../lib/db");
 
+//User schema to hold user information
 const userSchema = new db.Schema({
     name: {
         type: String,

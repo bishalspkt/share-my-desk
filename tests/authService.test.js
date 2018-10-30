@@ -5,6 +5,7 @@ test("isEmailValid", () => {
     expect(authService.isEmailValid("sample@example.com")).toBe(true);
     expect(authService.isEmailValid("smaple@notexample.com")).toBe(false);
     expect(authService.isEmailValid("notEmail@.dom")).toBe(false);
+    expect(authService.isEmailValid("notEmaildom")).toBe(false);
 });
 
 test("generateSecret", (done) => {
