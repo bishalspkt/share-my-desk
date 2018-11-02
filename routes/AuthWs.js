@@ -2,7 +2,7 @@
 
 const utils = require("../lib/utils");
 const httpResponseTemplates = require("../lib/httpResponseTemplates");
-const authService = require("../services/authService").authService();
+const authService = require("../services/AuthService").authService();
 
 const signUp = (req, res) => {
     if (utils.propertyIsNull(req, "body")) {
