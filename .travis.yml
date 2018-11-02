@@ -5,3 +5,7 @@ node_js:
 
 git:
   depth: 5
+
+before_script:
+  - npm config set share-my-desk:ORG_EMAIL_DOMAIN example.com
+  - npm config set share-my-desk:JWT_SECRET $0M3_S3cr37_VAiu3
