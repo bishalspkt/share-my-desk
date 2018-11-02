@@ -1,14 +1,17 @@
 "use strict";
 
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const validator = require("email-validator");
 const { Entropy } = require("entropy-string");
+const jwt = require("jsonwebtoken");
 const logger = require("../lib/logger");
 const utils = require("../lib/utils");
 
 const entropy = new Entropy({charset: "1234567890ABCDEF"});
 const orgDomain = utils.getConfig("ORG_EMAIL_DOMAIN", "example.com");
 const bcryptCost = utils.getConfig("BCRYPT_COST", 11);
+const jwtSecret = utils.getConfig("JWT_SECRET", utils.CRITICAL_CONFIG);
 
 const SECRET_EXPIRES_IN = 2 * 3600 * 1000; // 2 hours
 /**
@@ -31,6 +34,18 @@ const generateSecret = (cb) => {
         cb({ secret: secret, bcrypt: hash });
     });
 
+};
+
+const getJWTForUser = (user) => {
+    const payload = {
+        iat: new Date() / 1000,
+        iss: "authService.login",
+        sub: user.email,
+        name: user.name
+    };
+    payload.jti = crypto.createHash("md5").update(payload.sub + payload.iat).digest("hex");
+
+    return jwt.sign(payload, jwtSecret);
 };
 /**
  * Creates an authService instance
@@ -119,14 +134,14 @@ exports.authService = (userModel) => {
                 }
 
                 // Generate API token
-                const token = "Y0uR_10Gln_70k3N";
+                const token = getJWTForUser(matchedUser);
 
                 // Invalidate the login and save api key
-                matchedUser.apiKeys.push(token);
+                matchedUser.apiKeys.push({ tokenHash: token.jti, generatedOn: token.iat });
                 matchedUser.accountInfo = null;
                 matchedUser.save();
                 logger.info(`Successful login. Email: ${email}`);
-                return cb(null, {token: token});
+                return cb(null, {apiToken: token});
             });
         });
     };

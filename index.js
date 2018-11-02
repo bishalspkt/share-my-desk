@@ -6,17 +6,25 @@ const logger = require("./lib/logger");
 const server = require("./lib/server").create();
 const ramlSpecPath = "raml/api.raml";
 
-const AuthWs = require("./web-services/AuthWs");
+const AuthWs = require("./routes/AuthWs");
+const ShareMyDeskWs = require("./routes/ShareMyDeskWs");
+const OfficeLocationsWs = require("./routes/OfficeLocationsWs");
 
 utils.assertNodeRuntime();
 
-const installRAMLMiddleware = (done) => {
+const configureAuth = (done) => {
+    server.configurePassportAuth(done);
+};
+
+const installRAMLMiddleware = (server, done) => {
     server.installRAML(ramlSpecPath, (err, server) => done(err, server));
 };
 
 const installWebServices = (server, done) => {
-    server.installApiDocs(ramlSpecPath, "/");
+    server.installApiDocs(ramlSpecPath, "/apidoc");
     AuthWs.install(server);
+    ShareMyDeskWs.install(server);
+    OfficeLocationsWs.install(server);
     done(null, server);
 };
 
@@ -25,6 +33,7 @@ const startListening = (server, done) => {
 };
 
 async.waterfall([
+    configureAuth,
     installRAMLMiddleware,
     installWebServices,
     startListening
