@@ -14,7 +14,10 @@ const userSchema = new db.Schema({
         required: true,
         unique: true
     },
-    apiKeys: [String],
+    apiKeys: [{
+        jti: String,
+        generatedOn: Number,
+    }],
     accountInfo: {
         secret: String,
         secretExpires: Date,
