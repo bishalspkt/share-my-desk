@@ -121,11 +121,6 @@ exports.authService = (userModel) => {
                 logger.warn(`Unknown error attempt denied. Email: ${email}`);
                 return cb("UNKNOWN_ERROR"); // mandatory field not found
             }
-            const secretExpires = matchedUser.accountInfo.secretExpires;
-            if (utils.isNull(secretExpires) || Date.now() > secretExpires) {
-                logger.warn(`Login attempt denied. Secret expired. Email: ${email}`);
-                return cb("SECRET_EXPIRED");
-            }
 
             bcrypt.compare(secret, matchedUser.accountInfo.secret, (err, matched) => {
                 if (err || matched == false) {
@@ -133,6 +128,11 @@ exports.authService = (userModel) => {
                     return cb("SECRET_INCORRECT");
                 }
 
+                const secretExpires = matchedUser.accountInfo.secretExpires;
+                if (utils.isNull(secretExpires) || Date.now() > secretExpires) {
+                    logger.warn(`Login attempt denied. Secret expired. Email: ${email}`);
+                    return cb("SECRET_EXPIRED");
+                }
                 // Generate API token
                 const token = getJWTForUser(matchedUser);
 
