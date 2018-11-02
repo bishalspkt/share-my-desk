@@ -4,7 +4,7 @@ description: RAML spec for complete API
 version: v1
 baseUri: /api/v1/
 
-/:
+/apidoc:
   description: Describes the share my desk API
   get:
     description: Describes the share my desk API
@@ -53,7 +53,7 @@ baseUri: /api/v1/
               example: |
                 {
                   "success":false,
-                  "reason": "REASON FOR FAILURE",
+                  "message": "REASON FOR FAILURE",
                   "errcode": "ERRCODE"
                 }
 
@@ -101,7 +101,7 @@ baseUri: /api/v1/
               example: |
                 {
                   "success":false,
-                  "reason": "REASON FOR FAILURE",
+                  "message": "REASON FOR FAILURE",
                   "errcode": "ERRCODE"
                 }
 
@@ -143,7 +143,7 @@ baseUri: /api/v1/
             example: |
               {
                 "success":false,
-                "reason": "REASON FOR FAILURE",
+                "message": "REASON FOR FAILURE",
                 "errcode": "ERRCODE"
               }
 
@@ -164,13 +164,17 @@ baseUri: /api/v1/
                 "type":"array",
                 "required": true
               },
+              "deskNumber": {
+                "type": "string",
+                "required": true
+              },
               "notes": {
                 "type": "string",
                 "required": false
               },
               "directions": {
                 "type": "string",
-                "required": true
+                "required": false
               },
               "closest_room_name": {
                 "type": "string",
@@ -181,6 +185,7 @@ baseUri: /api/v1/
         example: |
           {
             "datesAvailable": ["23 Jan","24 Jan"],
+            "deskNumber": "111",
             "notes": "2 Monitors and a dock for thinkpad avaialble",
             "directions": "Next to the kitchen in 6th floor",
             "closest_room_name": "BIR_D"
@@ -201,7 +206,7 @@ baseUri: /api/v1/
             example: |
               {
                 "success": false,
-                "reason": "REASON FOR FAILURE",
+                "message": "REASON FOR FAILURE",
                 "errcode": "ERRCODE"
               }
 
@@ -212,6 +217,29 @@ baseUri: /api/v1/
   get:
 
 # To be designed
-/unshareDesk:
+/unshareMyDesk:
   description: Undo the share of desk
   post:
+
+/getOfficeLocations:
+  description: list of office locations
+  get:
+    responses:
+      200:
+        description: Request Successful
+        body:
+          application/json:
+            example: |
+              {
+                "success": true
+              }
+      500:
+        description: Failure
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "REASON FOR FAILURE",
+                "errcode": "ERRCODE"
+              }
