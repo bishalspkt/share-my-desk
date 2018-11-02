@@ -8,4 +8,4 @@ git:
 
 before_script:
   - npm config set share-my-desk:ORG_EMAIL_DOMAIN example.com
-  - npm config set share_my_desk:JWT_SECRET $0M3_S3cr37_VAiu3
+  - npm config set share-my-desk:JWT_SECRET $0M3_S3cr37_VAiu3
