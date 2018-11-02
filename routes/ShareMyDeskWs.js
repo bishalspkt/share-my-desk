@@ -1,14 +1,15 @@
 "use strict";
 
-const httpResponseTemplates = require("../lib/httpResponseTemplates");
+const webUtils = require("../lib/webUtils");
 const logger = require("../lib/logger");
 
 
 const shareMyDesk = (req, res) => {
-    httpResponseTemplates.sendSuccess(res, {user: req.user, session: req.session});
+    webUtils.sendSuccess(res, { user: req.user });
 };
 
 exports.install = (server) => {
-    server.post(server.getPath("/shareMyDesk"), shareMyDesk);
+    const bodyValidatorMiddleware = webUtils.getBodyValidatorMiddleware();
+    server.post(server.getPath("/shareMyDesk"), bodyValidatorMiddleware, shareMyDesk);
     logger.info("shareMyDesk installed at " + server.getPath("/shareMyDesk"));
 };
