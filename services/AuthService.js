@@ -40,7 +40,7 @@ const getJWTForUser = (user) => {
     const payload = {
         iat: new Date() / 1000,
         iss: "authService.login",
-        sub: user.email,
+        sub: user._id,
         name: user.name
     };
     payload.jti = crypto.createHash("md5").update(payload.sub + payload.iat).digest("hex");
