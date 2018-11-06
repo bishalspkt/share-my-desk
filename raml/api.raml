@@ -111,15 +111,15 @@ baseUri: /api/v1/
     description: Returns a list of desks posted for the specified search parameters
     queryParameters:
 
-      campusID:
-        displayName: Campus ID
-        description: Campus ID ex. WF, BW, WP, WB
+      officeLocation:
+        displayName: Office Location
+        description: Office Location to handle multiple offices
         type: string
         required: true
-      searchDate: 
+      date: 
         displayName: Search Date
         description: Search date
-        type: string
+        type: integer
         required: true
       showBookedDesks:
         displayName: Show Booked Desks

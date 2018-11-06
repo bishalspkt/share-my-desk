@@ -7,7 +7,7 @@ const server = require("./lib/server").create();
 const ramlSpecPath = "raml/api.raml";
 
 const AuthWs = require("./routes/AuthWs");
-const ShareMyDeskWs = require("./routes/ShareMyDeskWs");
+const DeskWs = require("./routes/DeskWs");
 const OfficeLocationsWs = require("./routes/OfficeLocationsWs");
 
 utils.assertNodeRuntime();
@@ -23,7 +23,7 @@ const installRAMLMiddleware = (server, done) => {
 const installWebServices = (server, done) => {
     server.installApiDocs(ramlSpecPath, "/apidoc");
     AuthWs.install(server);
-    ShareMyDeskWs.install(server);
+    DeskWs.install(server);
     OfficeLocationsWs.install(server);
     done(null, server);
 };
