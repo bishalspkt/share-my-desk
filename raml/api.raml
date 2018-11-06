@@ -160,8 +160,12 @@ baseUri: /api/v1/
             "id": "http://jsonschema.net",
             "required": true,
             "properties": {
-              "datesAvailable": {
-                "type":"array",
+              "date": {
+                "type": "integer",
+                "required": true
+              },
+              "officeLocation": {
+                "type": "string",
                 "required": true
               },
               "deskNumber": {
@@ -176,7 +180,7 @@ baseUri: /api/v1/
                 "type": "string",
                 "required": false
               },
-              "closest_room_name": {
+              "closestRoomName": {
                 "type": "string",
                 "required": false
               }
@@ -184,7 +188,8 @@ baseUri: /api/v1/
           }
         example: |
           {
-            "datesAvailable": ["23 Jan","24 Jan"],
+            "date": 20181010,
+            "officeLocation": "B_GB",
             "deskNumber": "111",
             "notes": "2 Monitors and a dock for thinkpad avaialble",
             "directions": "Next to the kitchen in 6th floor",
