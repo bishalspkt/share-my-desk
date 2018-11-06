@@ -7,6 +7,7 @@ const { Entropy } = require("entropy-string");
 const jwt = require("jsonwebtoken");
 const logger = require("../lib/logger");
 const utils = require("../lib/utils");
+const errcodes = require("../lib/constants").ErrorCodes();
 
 const entropy = new Entropy({charset: "1234567890ABCDEF"});
 const orgDomain = utils.getConfig("ORG_EMAIL_DOMAIN", "example.com");
@@ -69,12 +70,12 @@ exports.authService = (userModel) => {
      */
     instance.signUp = (email, name, cb) => {
         if (!isEmailValid(email)) {
-            return cb("INVALID_EMAIL");
+            return cb(errcodes.INVALID_EMAIL);
         }
         // test if email exists
         userModel.findOne({ email: email }, (err, matchedUser) => {
             if (err) {
-                return cb("DATABASE_ERROR");
+                return cb(errcodes.DATABASE_ERROR);
             }
 
             // Generate secret
@@ -87,7 +88,7 @@ exports.authService = (userModel) => {
                 };
                 user.save((err) => {
                     if (err) {
-                        return cb("DATABASE_ERROR");
+                        return cb(errcodes.DATABASE_ERROR);
                     }
                     cb(null, {secret: value.secret});
                 });
@@ -106,32 +107,32 @@ exports.authService = (userModel) => {
     instance.login = (email, secret, cb) => {
         if (!isEmailValid(email)) {
             logger.warn(`Invalid email login attempt denied. Email: ${email}`);
-            return cb("EMAIL_UNKNOWN");
+            return cb(errcodes.EMAIL_UNKNOWN);
         }
         userModel.findOne({ email: email }, (err, matchedUser) => {
             if (err) {
-                return cb("DATABASE_ERROR");
+                return cb(errcodes.DATABASE_ERROR);
             }
             if (utils.isNull(matchedUser)) {
                 logger.warn(`Unknown email login attempt denied. Email: ${email}`);
-                return cb("EMAIL_UNKNOWN");
+                return cb(errcode.EMAIL_UNKNOWN);
             }
             // Email match was found, check the secret
             if (utils.propertyIsNull(matchedUser, "accountInfo")) {
                 logger.warn(`Unknown error attempt denied. Email: ${email}`);
-                return cb("UNKNOWN_ERROR"); // mandatory field not found
+                return cb(errcodes.UNKNOWN_ERROR); // mandatory field not found
             }
 
             bcrypt.compare(secret, matchedUser.accountInfo.secret, (err, matched) => {
                 if (err || matched == false) {
                     logger.warn(`Login attempt denied. Incorrect secret. Email: ${email}`);
-                    return cb("SECRET_INCORRECT");
+                    return cb(errcodes.SECRET_INCORRECT);
                 }
 
                 const secretExpires = matchedUser.accountInfo.secretExpires;
                 if (utils.isNull(secretExpires) || Date.now() > secretExpires) {
                     logger.warn(`Login attempt denied. Secret expired. Email: ${email}`);
-                    return cb("SECRET_EXPIRED");
+                    return cb(errcodes.SECRET_EXPIRED);
                 }
                 // Generate API token
                 const token = getJWTForUser(matchedUser);
