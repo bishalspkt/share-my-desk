@@ -1,5 +1,5 @@
 "use strict";
-const authService = require("../services/authService");
+const authService = require("../services/AuthService");
 
 test("isEmailValid", () => {
     expect(authService.isEmailValid("sample@example.com")).toBe(true);
