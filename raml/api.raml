@@ -119,7 +119,7 @@ baseUri: /api/v1/
       date: 
         displayName: Search Date
         description: Search date
-        type: integer
+        type: string
         required: true
       showBookedDesks:
         displayName: Show Booked Desks
@@ -160,8 +160,8 @@ baseUri: /api/v1/
             "id": "http://jsonschema.net",
             "required": true,
             "properties": {
-              "date": {
-                "type": "integer",
+              "datesAvailable": {
+                "type": "array",
                 "required": true
               },
               "officeLocation": {
@@ -188,12 +188,12 @@ baseUri: /api/v1/
           }
         example: |
           {
-            "date": 20181010,
-            "officeLocation": "B_GB",
+            "datesAvailable": ["20181010", "20181011"],
+            "officeLocation": "SF",
             "deskNumber": "111",
             "notes": "2 Monitors and a dock for thinkpad avaialble",
             "directions": "Next to the kitchen in 6th floor",
-            "closest_room_name": "BIR_D"
+            "closest_room_name": "SF 102"
           }
     responses:
       200:
