@@ -7,7 +7,7 @@ const shareMyDeskService = require("../services/DeskService.js").DeskService();
 
 const shareMyDesk = (req, res) => {
     const deskDetails = {
-        date: req.body.date,
+        datesAvailable: req.body.datesAvailable,
         officeLocation: req.body.officeLocation,
         deskNumber: req.body.deskNumber,
         notes: req.body.notes,
@@ -21,7 +21,7 @@ const shareMyDesk = (req, res) => {
         if (utils.isNotNull(ERRCODE)) {
             return webUtils.sendFailure(res, ERRCODE);
         }
-        webUtils.sendSuccess(res, responseObject);
+        return webUtils.sendSuccess(res, responseObject);
     });
 };
 
@@ -34,12 +34,12 @@ const getAvailableDesks = (req, res) => {
         if (utils.isNotNull(ERRCODE)) {
             return webUtils.sendFailure(res, ERRCODE);
         }
-        webUtils.sendSuccess(res, responseObject);
+        return webUtils.sendSuccess(res, responseObject);
     });
 }
 
 exports.install = (server) => {
-    const shareValidatorMiddleware = webUtils.getBodyValidatorMiddleware(["date", "deskNumber"]);
+    const shareValidatorMiddleware = webUtils.getBodyValidatorMiddleware(["datesAvailable", "deskNumber", "officeLocation"]);
     const getDesksValidatorMiddleware = webUtils.getQueryValidatorMiddleware(["date", "officeLocation"]);
 
     server.post(server.getPath("/shareMyDesk"), shareValidatorMiddleware, shareMyDesk);
