@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  build:
+    environment:
+      CI_ENV: "CircleCI"
+      PROJECT_NAME: "share_my_desk"
+    parallelism: 1
+    machine: true
+    steps:
+      - checkout
+
+      -run:
+        name: Instantiate npm configs
+        command: |
+          echo "Setting up required npm config"
+          npm config set share-my-desk:ORG_EMAIL_DOMAIN example.com
+          npm config set share-my-desk:JWT_SECRET $0M3_S3cr37_VAiu3
+
+      - run:
+        name: Jest Test
+        command: npm test
