@@ -18,7 +18,7 @@ const userSchema = new db.Schema({
         jti: String,
         generatedOn: Number,
     }],
-    accountInfo: {
+    activationInfo: {
         secret: String,
         secretExpires: Date,
     }
