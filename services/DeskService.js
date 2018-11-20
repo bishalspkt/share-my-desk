@@ -26,14 +26,14 @@ exports.DeskService = (availableDeskModel, userModel) => {
         }
 
         // Check if the dates being passed in were valid
-        const datesAvailable = moment(deskDetails.datesAvailable)
         const today = moment().startOf('day');
-        const lastValidDay = today.add(canShareForDaysInFuture, 'days');
-        for (var i = 0; i < datesAvailable.length; i++) {
-            var momentDate = moment(datesAvailable[i], "YYYYMMDD");
+        const lastValidDay = today.clone().add(canShareForDaysInFuture, 'days'); // add mutates the original value, so clone() it beforehand
+        for (var i = 0; i < deskDetails.datesAvailable.length; i++) {
+            var momentDate = moment(deskDetails.datesAvailable[i], "YYYYMMDD");
             if (!momentDate.isValid()) {
                 return cb(errcodes.INVALID_DATE_FORMAT);
             }
+
             if (momentDate.isBefore(today) || momentDate.isAfter(lastValidDay)) {
                 return cb(errcodes.DATE_NOT_IN_VALID_RANGE);
             }
@@ -53,27 +53,29 @@ exports.DeskService = (availableDeskModel, userModel) => {
                 // Exisiting share with the same details found
                 return cb(errcodes.DESK_ALREADY_SHARED);
             }
+
+            // Flatten the deskDetails to one record per date
+            const postedBy = mongoose.Types.ObjectId(userId);
+            const insertObjects = deskDetails.datesAvailable.map(date => {
+                return {
+                    date: date,
+                    officeLocation: deskDetails.officeLocation,
+                    deskNumber: deskDetails.deskNumber,
+                    notes: deskDetails.notes,
+                    directions: deskDetails.directions,
+                    closestRoomName: deskDetails.closestRoomName,
+                    postedBy: postedBy
+                }
+            })
+            availableDeskModel.insertMany(insertObjects, (err, docs) => {
+                if (utils.isNotNull(err)) {
+                    return cb(errcodes.DATABASE_ERROR);
+                }
+                return cb(null, {insertCount: docs.length});
+            })
         });
         
-        // Flatten the deskDetails to one record per date
-        const postedBy = mongoose.Types.ObjectId(userId);
-        const insertObjects = deskDetails.datesAvailable.map(date => {
-            return {
-                date: date,
-                officeLocation: deskDetails.officeLocation,
-                deskNumber: deskDetails.deskNumber,
-                notes: deskDetails.notes,
-                directions: deskDetails.directions,
-                closestRoomName: deskDetails.closestRoomName,
-                postedBy: postedBy
-            }
-        })
-        availableDeskModel.insertMany(insertObjects, (err, docs) => {
-            if (utils.isNotNull(err)) {
-                return cb(errcodes.DATABASE_ERROR);
-            }
-            return cb(null, {insertCount: docs.length});
-        })
+
     };
 
     instance.getDesks = (query, cb) => {
