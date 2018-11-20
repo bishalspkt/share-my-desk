@@ -1,12 +1,14 @@
 "use strict";
 
 const db = require("../lib/db");
+const ModelNames = require("../lib/constants").ModelNames();
 const ObjectId = db.Schema.Types.ObjectId;
 
 //User schema to hold user information
 const availableDeskSchema = new db.Schema({
     postedBy: {
         type: ObjectId,
+        ref: ModelNames.USER_MODEL,
         required: true
     },
     date: {
@@ -38,9 +40,10 @@ const availableDeskSchema = new db.Schema({
     },
     bookedBy: {
         type: ObjectId,
+        ref: ModelNames.USER_MODEL,
         required: false,
         default: null
     }
 }, {timestamps: true});
 
-module.exports = db.model("Availabledesk", availableDeskSchema);
+module.exports = db.model(ModelNames.AVAILABLE_DESK_MODEL, availableDeskSchema);

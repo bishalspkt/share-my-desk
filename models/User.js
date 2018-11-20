@@ -1,6 +1,7 @@
 "use strict";
 
 var db = require("../lib/db");
+var ModelNames = require("../lib/constants").ModelNames();
 
 //User schema to hold user information
 const userSchema = new db.Schema({
@@ -24,4 +25,4 @@ const userSchema = new db.Schema({
     }
 }, {timestamps: true});
 
-module.exports = db.model("User", userSchema);
+module.exports = db.model(ModelNames.USER_MODEL, userSchema);
