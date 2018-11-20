@@ -82,7 +82,7 @@ exports.authService = (userModel) => {
             generateSecret((value) => {
                 const user = utils.isNull(matchedUser) ? userModel({email: email}) : matchedUser;
                 user.name = name;
-                user.accountInfo = {
+                user.activationInfo = {
                     secret: value.bcrypt,
                     secretExpires: new Date(Date.now() + SECRET_EXPIRES_IN).toISOString()
                 };
@@ -115,21 +115,21 @@ exports.authService = (userModel) => {
             }
             if (utils.isNull(matchedUser)) {
                 logger.warn(`Unknown email login attempt denied. Email: ${email}`);
-                return cb(errcode.EMAIL_UNKNOWN);
+                return cb(errcodes.EMAIL_UNKNOWN);
             }
             // Email match was found, check the secret
-            if (utils.propertyIsNull(matchedUser, "accountInfo")) {
+            if (utils.propertyIsNull(matchedUser, "activationInfo")) {
                 logger.warn(`Unknown error attempt denied. Email: ${email}`);
                 return cb(errcodes.UNKNOWN_ERROR); // mandatory field not found
             }
 
-            bcrypt.compare(secret, matchedUser.accountInfo.secret, (err, matched) => {
+            bcrypt.compare(secret, matchedUser.activationInfo.secret, (err, matched) => {
                 if (err || matched == false) {
                     logger.warn(`Login attempt denied. Incorrect secret. Email: ${email}`);
                     return cb(errcodes.SECRET_INCORRECT);
                 }
 
-                const secretExpires = matchedUser.accountInfo.secretExpires;
+                const secretExpires = matchedUser.activationInfo.secretExpires;
                 if (utils.isNull(secretExpires) || Date.now() > secretExpires) {
                     logger.warn(`Login attempt denied. Secret expired. Email: ${email}`);
                     return cb(errcodes.SECRET_EXPIRED);
@@ -139,7 +139,7 @@ exports.authService = (userModel) => {
 
                 // Invalidate the login and save api key
                 matchedUser.apiKeys.push({ tokenHash: token.jti, generatedOn: token.iat });
-                matchedUser.accountInfo = null;
+                matchedUser.activationInfo = null;
                 matchedUser.save();
                 logger.info(`Successful login. Email: ${email}`);
                 return cb(null, {apiToken: token});
