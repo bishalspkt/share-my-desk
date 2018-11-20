@@ -79,18 +79,62 @@ exports.DeskService = (availableDeskModel, userModel) => {
     };
 
     instance.getDesks = (query, cb) => {
-        availableDeskModel.find(query, (err, desks) => {
+        // Validate query parameters
+        if(officeLocations.map(office => office.location).indexOf(query.officeLocation) == -1) {
+            return cb(errcodes.INVALID_OFFICE_LOCATION);
+        }
+
+        var momentDate = moment(query.date, "YYYYMMDD");
+        if (!momentDate.isValid()) {
+            return cb(errcodes.INVALID_DATE_FORMAT);
+        }
+        const today = moment().startOf('day');
+        if(momentDate.isBefore(today)) {
+            return cb(errcodes.DATE_NOT_IN_VALID_RANGE);
+        }
+        // TODO: Determine how farther into the future are searches allowed.
+
+        availableDeskModel.
+            find(query).
+            populate('postedBy').
+            exec((err, _desks) => {
             if(err) {
                 return cb(errcodes.DATABASE_ERROR);
             }
 
-            if(utils.isEmpty(desks)) {
+            if(utils.isEmpty(_desks)) {
                 return cb(errcodes.NO_MATCH_FOUND);
             }
-            console.log("DESKS", desks);
+
+            // Return only the relevant information
+            let desks = createDeskResponse(_desks);
             cb(null, { desks: desks });
-        })
+        });
     };
 
+    /**
+     * Maps mongoose returned raw desks array to minimal desk details needed by the client
+     * @param {[AvailableDesk]} mongooseDesks returned from database 
+     */
+    const createDeskResponse = (mongooseDesks) => {
+        return mongooseDesks.map(_desk => {
+            return {
+                directions: _desk.directions,
+                notes: _desk.notes,
+                closestRoomName: _desk.closestRoomName,
+                isAvailable: utils.isNull(_desk.bookedBy),
+                availableDeskId: _desk._id,
+                date: _desk.date,
+                officeLocation: _desk.officeLocation,
+                deskNumber: _desk.deskNumber,
+                postedBy: {
+                    name: _desk.postedBy.name,
+                    email: _desk.postedBy.email
+                },
+                postedOn: _desk.updatedAt
+
+            }
+        });
+    }
     return instance;
 }
