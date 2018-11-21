@@ -46,7 +46,10 @@ const getJWTForUser = (user) => {
     };
     payload.jti = crypto.createHash("md5").update(payload.sub + payload.iat).digest("hex");
 
-    return jwt.sign(payload, jwtSecret);
+    return {
+        jwt: jwt.sign(payload, jwtSecret),
+        payload: payload
+    };
 };
 /**
  * Creates an authService instance
@@ -73,25 +76,43 @@ exports.authService = (userModel) => {
             return cb(errcodes.INVALID_EMAIL);
         }
         // test if email exists
-        userModel.findOne({ email: email }, (err, matchedUser) => {
+        userModel.findUserByEmail(email, (err, matchedUser) => {
             if (err) {
                 return cb(errcodes.DATABASE_ERROR);
             }
 
             // Generate secret
             generateSecret((value) => {
-                const user = utils.isNull(matchedUser) ? userModel({email: email}) : matchedUser;
-                user.name = name;
-                user.activationInfo = {
+
+                const activationInfo = {
                     secret: value.bcrypt,
                     secretExpires: new Date(Date.now() + SECRET_EXPIRES_IN).toISOString()
-                };
-                user.save((err) => {
-                    if (err) {
-                        return cb(errcodes.DATABASE_ERROR);
+                }
+                if (utils.isNull(matchedUser)) {
+                    // New user sign up
+                    const newUser = {
+                        email: email,
+                        name: name,
+                        activationInfo: activationInfo
+                    };
+                    userModel.createUser(newUser, (err) => {
+                        if (err) {
+                            return cb(errcodes.DATABASE_ERROR);
+                        }
+                        return cb(null, {secret: value.secret});
+                    });
+                } else {
+                    // Existing user signing up for new token
+                    const updateObject = {
+                        activationInfo: activationInfo
                     }
-                    cb(null, {secret: value.secret});
-                });
+                    userModel.updateUserWithId(matchedUser._id, updateObject, (err, rawResponse) => {
+                        if (err) {
+                            return cb(errcodes.DATABASE_ERROR, rawResponse);
+                        }
+                        return cb(null, {secret: value.secret});
+                    });
+                }
             });
         });
     };
@@ -109,7 +130,7 @@ exports.authService = (userModel) => {
             logger.warn(`Invalid email login attempt denied. Email: ${email}`);
             return cb(errcodes.EMAIL_UNKNOWN);
         }
-        userModel.findOne({ email: email }, (err, matchedUser) => {
+        userModel.findUserByEmail(email, (err, matchedUser) => {
             if (err) {
                 return cb(errcodes.DATABASE_ERROR);
             }
@@ -136,13 +157,23 @@ exports.authService = (userModel) => {
                 }
                 // Generate API token
                 const token = getJWTForUser(matchedUser);
-
+                console.log(matchedUser);
+                matchedUser.apiKeys.push({ tokenHash: token.payload.jti, generatedOn: token.payload.iat });
+                console.log(matchedUser);
+                
                 // Invalidate the login and save api key
-                matchedUser.apiKeys.push({ tokenHash: token.jti, generatedOn: token.iat });
-                matchedUser.activationInfo = null;
-                matchedUser.save();
-                logger.info(`Successful login. Email: ${email}`);
-                return cb(null, {apiToken: token});
+                const updateObject = {
+                    activationInfo: null,
+                    apiKeys: matchedUser.apiKeys
+                };
+                console.log(updateObject);
+                userModel.updateUserWithId(matchedUser._id, updateObject, (err, rawResponse) => {
+                    if (err) {
+                        return cb(errcodes.DATABASE_ERROR);
+                    }
+                    logger.info(`Successful login. Email: ${email}`);
+                    return cb(null, {apiToken: token.jwt});
+                })
             });
         });
     };
