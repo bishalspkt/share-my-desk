@@ -41,9 +41,9 @@ const isDateWithinAllowedFuture = (dateToTest) => dateToTest.isBefore(moment().s
 const isDateInValidRange = (dateToTest) => !isDateBeforeToday(dateToTest) && isDateWithinAllowedFuture(dateToTest);
 
 
-exports.DeskService = (availableDeskModel, userModel) => {
-    if (utils.isNull(availableDeskModel)) {
-        availableDeskModel = require("../models/AvailableDesk");
+exports.DeskService = (deskModel, userModel) => {
+    if (utils.isNull(deskModel)) {
+        deskModel = require("../models/Desk");
     }
     if (utils.isNull(userModel)) {
         userModel = require("../models/User");
@@ -71,7 +71,7 @@ exports.DeskService = (availableDeskModel, userModel) => {
         }
 
         // Check if the desk is already shared for the date selected
-        availableDeskModel.isDeskAlreadyShared(deskDetails.deskNumber, deskDetails.officeLocation, deskDetails.datesAvailable, (err, isDeskShared) => {
+        deskModel.isDeskAlreadyShared(deskDetails.deskNumber, deskDetails.officeLocation, deskDetails.datesAvailable, (err, isDeskShared) => {
             if (utils.isNotNull(err)) {
                 logger.error(err);
                 return cb(errcodes.DATABASE_ERROR);
@@ -89,7 +89,7 @@ exports.DeskService = (availableDeskModel, userModel) => {
                 postedBy: userId
             };
 
-            availableDeskModel.insertDesk(desk, deskDetails.datesAvailable, (err, docs) => {
+            deskModel.insertDesk(desk, deskDetails.datesAvailable, (err, docs) => {
                 if (utils.isNotNull(err)) {
                     logger.error(err);
                     return cb(errcodes.DATABASE_ERROR);
@@ -115,7 +115,7 @@ exports.DeskService = (availableDeskModel, userModel) => {
             return cb(errcodes.DATE_NOT_IN_VALID_RANGE);
         }
         // TODO: Determine how farther into the future are searches allowed.
-        availableDeskModel.findDesks(query, (err, desks) => {
+        deskModel.findDesks(query, (err, desks) => {
             if (err) {
                 logger.error(err);
                 return cb(errcodes.DATABASE_ERROR);
@@ -129,30 +129,6 @@ exports.DeskService = (availableDeskModel, userModel) => {
         });
     };
 
-    /**
-     * Maps mongoose returned raw desks array to minimal desk details needed by the client
-     * @param {[AvailableDesk]} mongooseDesks returned from database
-     */
-    const createDeskResponse = (mongooseDesks) => {
-        return mongooseDesks.map(_desk => {
-            return {
-                directions: _desk.directions,
-                notes: _desk.notes,
-                closestRoomName: _desk.closestRoomName,
-                isAvailable: utils.isNull(_desk.bookedBy),
-                availableDeskId: _desk._id,
-                date: _desk.date,
-                officeLocation: _desk.officeLocation,
-                deskNumber: _desk.deskNumber,
-                postedBy: {
-                    name: _desk.postedBy.name,
-                    email: _desk.postedBy.email
-                },
-                postedOn: _desk.updatedAt
-
-            };
-        });
-    };
     return instance;
 };
 
