@@ -78,6 +78,7 @@ exports.authService = (userModel) => {
         // test if email exists
         userModel.findUserByEmail(email, (err, matchedUser) => {
             if (err) {
+                logger.error(err);
                 return cb(errcodes.DATABASE_ERROR);
             }
 
@@ -87,7 +88,7 @@ exports.authService = (userModel) => {
                 const activationInfo = {
                     secret: value.bcrypt,
                     secretExpires: new Date(Date.now() + SECRET_EXPIRES_IN).toISOString()
-                }
+                };
                 if (utils.isNull(matchedUser)) {
                     // New user sign up
                     const newUser = {
@@ -97,6 +98,7 @@ exports.authService = (userModel) => {
                     };
                     userModel.createUser(newUser, (err) => {
                         if (err) {
+                            logger.error(err);
                             return cb(errcodes.DATABASE_ERROR);
                         }
                         return cb(null, {secret: value.secret});
@@ -105,9 +107,10 @@ exports.authService = (userModel) => {
                     // Existing user signing up for new token
                     const updateObject = {
                         activationInfo: activationInfo
-                    }
+                    };
                     userModel.updateUserWithId(matchedUser._id, updateObject, (err, rawResponse) => {
                         if (err) {
+                            logger.error(err);
                             return cb(errcodes.DATABASE_ERROR, rawResponse);
                         }
                         return cb(null, {secret: value.secret});
@@ -132,6 +135,7 @@ exports.authService = (userModel) => {
         }
         userModel.findUserByEmail(email, (err, matchedUser) => {
             if (err) {
+                logger.error(err);
                 return cb(errcodes.DATABASE_ERROR);
             }
             if (utils.isNull(matchedUser)) {
@@ -157,23 +161,21 @@ exports.authService = (userModel) => {
                 }
                 // Generate API token
                 const token = getJWTForUser(matchedUser);
-                console.log(matchedUser);
                 matchedUser.apiKeys.push({ tokenHash: token.payload.jti, generatedOn: token.payload.iat });
-                console.log(matchedUser);
-                
+
                 // Invalidate the login and save api key
                 const updateObject = {
                     activationInfo: null,
                     apiKeys: matchedUser.apiKeys
                 };
-                console.log(updateObject);
                 userModel.updateUserWithId(matchedUser._id, updateObject, (err, rawResponse) => {
                     if (err) {
+                        logger.error(err);
                         return cb(errcodes.DATABASE_ERROR);
                     }
-                    logger.info(`Successful login. Email: ${email}`);
+                    logger.info(`Successful login. Email: ${email}`, rawResponse);
                     return cb(null, {apiToken: token.jwt});
-                })
+                });
             });
         });
     };

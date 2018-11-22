@@ -1,8 +1,8 @@
 "use strict";
 
 const moment = require("moment");
-const mongoose = require("mongoose");
 const utils = require("../lib/utils");
+const logger = require("../lib/logger");
 const errcodes = require("../lib/constants").ErrorCodes();
 const officeLocations = require("./OfficeLocationsService").getOfficeLocations();
 
@@ -71,35 +71,27 @@ exports.DeskService = (availableDeskModel, userModel) => {
         }
 
         // Check if the desk is already shared for the date selected
-        const searchObject = {
-            officeLocation: deskDetails.officeLocation,
-            deskNumber: deskDetails.deskNumber,
-            date: { $in:  deskDetails.datesAvailable }
-        };
-        availableDeskModel.find(searchObject, (err, desks) => {
+        availableDeskModel.isDeskAlreadyShared(deskDetails.deskNumber, deskDetails.officeLocation, deskDetails.datesAvailable, (err, isDeskShared) => {
             if (utils.isNotNull(err)) {
+                logger.error(err);
                 return cb(errcodes.DATABASE_ERROR);
             }
-            if (!utils.isEmpty(desks)) {
+            if (isDeskShared) {
                 // Exisiting share with the same details found
                 return cb(errcodes.DESK_ALREADY_SHARED);
             }
+            const desk = {
+                officeLocation: deskDetails.officeLocation,
+                deskNumber: deskDetails.deskNumber,
+                notes: deskDetails.notes,
+                directions: deskDetails.directions,
+                closestRoomName: deskDetails.closestRoomName,
+                postedBy: userId
+            };
 
-            // Flatten the deskDetails to one record per date
-            const postedBy = mongoose.Types.ObjectId(userId);
-            const insertObjects = deskDetails.datesAvailable.map(date => {
-                return {
-                    date: date,
-                    officeLocation: deskDetails.officeLocation,
-                    deskNumber: deskDetails.deskNumber,
-                    notes: deskDetails.notes,
-                    directions: deskDetails.directions,
-                    closestRoomName: deskDetails.closestRoomName,
-                    postedBy: postedBy
-                };
-            });
-            availableDeskModel.insertMany(insertObjects, (err, docs) => {
+            availableDeskModel.insertDesk(desk, deskDetails.datesAvailable, (err, docs) => {
                 if (utils.isNotNull(err)) {
+                    logger.error(err);
                     return cb(errcodes.DATABASE_ERROR);
                 }
                 return cb(null, {insertCount: docs.length});
@@ -123,23 +115,18 @@ exports.DeskService = (availableDeskModel, userModel) => {
             return cb(errcodes.DATE_NOT_IN_VALID_RANGE);
         }
         // TODO: Determine how farther into the future are searches allowed.
+        availableDeskModel.findDesks(query, (err, desks) => {
+            if (err) {
+                logger.error(err);
+                return cb(errcodes.DATABASE_ERROR);
+            }
 
-        availableDeskModel.
-            find(query).
-            populate("postedBy").
-            exec((err, _desks) => {
-                if (err) {
-                    return cb(errcodes.DATABASE_ERROR);
-                }
+            if (utils.isEmpty(desks)) {
+                return cb(errcodes.NO_DESK_FOUND);
+            }
 
-                if (utils.isEmpty(_desks)) {
-                    return cb(errcodes.NO_MATCH_FOUND);
-                }
-
-                // Return only the relevant information
-                let desks = createDeskResponse(_desks);
-                cb(null, { desks: desks });
-            });
+            cb(null, { desks: desks });
+        });
     };
 
     /**
