@@ -1,5 +1,6 @@
 "use strict";
 
+// In memory user model to mock database calls
 const _inMemoryUserTable = [];
 var _nextId = 100; // random starting value
 
@@ -13,7 +14,11 @@ exports.findUserByEmail = (email, cb) => {
 
 
 exports.createUser = (userObject, cb) => {
-    userObject._id = ++_nextId;
+    userObject._id = (++_nextId).toString();
+    userObject.apiKeys = [];
+    userObject.createdAt = new Date();
+    userObject.updatedAt = new Date();
+
     _inMemoryUserTable.push(userObject);
     cb(null, "rawResponse : Success!!");
 };
@@ -32,4 +37,4 @@ exports.updateUserWithId = (_id, updateObj, cb) => {
     cb(null, "update Success");
 };
 
-exports._returnInternalState = () => _inMemoryUserTable;
+exports._internalState =  _inMemoryUserTable;

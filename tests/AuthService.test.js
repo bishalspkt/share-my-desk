@@ -1,8 +1,12 @@
 "use strict";
 const orgEmailDomain = require("../lib/utils").getConfig("ORG_EMAIL_DOMAIN", "example.com");
 
+const errcodes = require("../lib/constants").ErrorCodes();
 const authService = require("../services/AuthService");
+const userModel = require("./mocks/mockUserModel");
+const auth = authService.authService(userModel);
 
+var signupSecret = "";
 test("isEmailValid", () => {
     expect(authService.isEmailValid("sample@" + orgEmailDomain)).toBe(true);
     expect(authService.isEmailValid("smaple@notexample.com")).toBe(false);
@@ -19,14 +23,59 @@ test("generateSecret", (done) => {
     });
 });
 
-test("Test Signup service", (done) => {
-    const userModel = require("./mocks/mockUserModel");
-    const auth = authService.authService(userModel);
+test("Sign Up - Invalid email", (done) => {
+    const invalidEmail = "unknown@someRandomEmail";
+    const name = "";
+    auth.signUp(invalidEmail, name, (ERRCODE) => {
+        expect(ERRCODE).toBe(errcodes.INVALID_EMAIL);
+        done();
+    });
+});
 
-    auth.signUp("sample@" + orgEmailDomain, "Sample Example",  (ERRCODE, result) => {
+test("Sign Up - Successful", (done) => {
+    const email = "sample@" + orgEmailDomain;
+    const name = "Sample Example";
+    auth.signUp(email, name,  (ERRCODE, result) => {
         expect(ERRCODE).toBeNull();
         expect(result).not.toBeNull();
         expect(result.secret).not.toBeNull();
+        signupSecret = result.secret;
+        done();
+    });
+});
+
+test("Login - Invalid Email", (done) => {
+    const invalidEmail = "unknown@";
+    const secret = "!@#";
+    auth.login(invalidEmail, secret, (ERRCODE) => {
+        expect(ERRCODE).toBe(errcodes.INVALID_EMAIL);
+        done();
+    });
+});
+
+test("Login - Not recognized email", (done) => {
+    const unrecognizedEmail = "unknown@" + orgEmailDomain;
+    const secret = "!@#";
+    auth.login(unrecognizedEmail, secret, (ERRCODE) => {
+        expect(ERRCODE).toBe(errcodes.EMAIL_UNKNOWN);
+        done();
+    });
+});
+
+test("Login - Incorrect secret", (done) => {
+    const unrecognizedEmail = "sample@" + orgEmailDomain;
+    const secret = "!@#";
+    auth.login(unrecognizedEmail, secret, (ERRCODE) => {
+        expect(ERRCODE).toBe(errcodes.SECRET_INCORRECT);
+        done();
+    });
+});
+
+test("Login - Successful", (done) => {
+    const email = "sample@" + orgEmailDomain;
+    auth.login(email, signupSecret, (ERRCODE, response) => {
+        expect(ERRCODE).toBeFalsy();
+        expect(response.apiToken).toBeTruthy();
         done();
     });
 });

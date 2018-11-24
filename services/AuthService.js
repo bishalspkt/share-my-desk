@@ -131,7 +131,7 @@ exports.authService = (userModel) => {
     instance.login = (email, secret, cb) => {
         if (!isEmailValid(email)) {
             logger.warn(`Invalid email login attempt denied. Email: ${email}`);
-            return cb(errcodes.EMAIL_UNKNOWN);
+            return cb(errcodes.INVALID_EMAIL);
         }
         userModel.findUserByEmail(email, (err, matchedUser) => {
             if (err) {
