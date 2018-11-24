@@ -15,7 +15,7 @@ exports.insertDesk = (desk, dates, cb) => {
 
         _inMemoryDeskTable.push(insertObjects[i]);
     }
-    cb(null);
+    cb(null, insertObjects);
 };
 
 exports.isDeskAlreadyShared = (deskNumber, officeLocation, proposedDates, cb) => {
