@@ -7,6 +7,10 @@ const deskModel = require("./mocks/mockDeskModel");
 const deskService = require("../services/DeskService");
 const desk = deskService.DeskService(deskModel);
 
+const officeLocation = "SYD";
+const testDeskNumber = "111";
+const postedById = 101;
+
 test("Test date parsing", () => {
     const sampleStrings = [
         "INVALID",
@@ -71,12 +75,12 @@ test("Share Desk - Invalid Location", (done) => {
 
     let today = moment().startOf("day").format("YYYYMMDD");
     const deskDetails = {
-        deskNumber: "111",
+        deskNumber: testDeskNumber,
         officeLocation: "INVALID",
         datesAvailable: [today]
     };
 
-    desk.share(deskDetails, "101", (err) => {
+    desk.share(deskDetails, postedById, (err) => {
         expect(err).toBe(errcodes.INVALID_OFFICE_LOCATION);
         done();
     });
@@ -85,12 +89,12 @@ test("Share Desk - Invalid Location", (done) => {
 test("Share Desk - Invalid Date Format", (done) => {
 
     const deskDetails = {
-        deskNumber: "111",
-        officeLocation: "SYD",
+        deskNumber: testDeskNumber,
+        officeLocation: officeLocation,
         datesAvailable: ["INVALID_DATE"]
     };
 
-    desk.share(deskDetails, "101", (err) => {
+    desk.share(deskDetails, postedById, (err) => {
         expect(err).toBe(errcodes.INVALID_DATE_FORMAT);
         done();
     });
@@ -100,12 +104,12 @@ test("Share Desk - Date not in valid range", (done) => {
 
     let yesterday = moment().startOf("day").subtract(1, "day").format("YYYYMMDD");
     const deskDetails = {
-        deskNumber: "111",
-        officeLocation: "SYD",
+        deskNumber: testDeskNumber,
+        officeLocation: officeLocation,
         datesAvailable: [yesterday]
     };
 
-    desk.share(deskDetails, "101", (err) => {
+    desk.share(deskDetails, postedById, (err) => {
         expect(err).toBe(errcodes.DATE_NOT_IN_VALID_RANGE);
         done();
     });
@@ -117,12 +121,12 @@ test("Share Desk - Successful", (done) => {
     let fiveDaysLater = today.clone().add(5, "days").format("YYYYMMDD");
     let tenDaysLater = today.clone().add(10, "days").format("YYYYMMDD");
     const deskDetails = {
-        deskNumber: "111",
-        officeLocation: "SYD",
+        deskNumber: testDeskNumber,
+        officeLocation: officeLocation,
         datesAvailable: [fiveDaysLater, tenDaysLater]
     };
 
-    desk.share(deskDetails, "101", (err, response) => {
+    desk.share(deskDetails, postedById, (err, response) => {
         expect(err).toBe(null);
         expect(response).toBeTruthy();
         expect(response.insertCount).toBe(2);
@@ -134,12 +138,12 @@ test("Share Desk - Already shared", (done) => {
 
     let fiveDaysLater = moment().startOf("day").add(5, "days").format("YYYYMMDD");
     const deskDetails = {
-        deskNumber: "111",
-        officeLocation: "SYD",
+        deskNumber: testDeskNumber,
+        officeLocation: officeLocation,
         datesAvailable: [fiveDaysLater]
     };
 
-    desk.share(deskDetails, "101", (err) => {
+    desk.share(deskDetails, postedById, (err) => {
         expect(err).toBe(errcodes.DESK_ALREADY_SHARED);
         done();
     });
