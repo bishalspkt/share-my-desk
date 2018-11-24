@@ -13,7 +13,7 @@ const shareMyDesk = (req, res) => {
         notes: req.body.notes,
         directions: req.body.directions,
         closestRoomName: req.body.closestRoomName
-    }
+    };
 
     const userId = req.user.sub;
     // Try entering without validation
@@ -36,7 +36,7 @@ const getAvailableDesks = (req, res) => {
         }
         return webUtils.sendSuccess(res, responseObject);
     });
-}
+};
 
 exports.install = (server) => {
     const shareValidatorMiddleware = webUtils.getBodyValidatorMiddleware(["datesAvailable", "deskNumber", "officeLocation"]);
