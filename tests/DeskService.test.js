@@ -148,3 +148,29 @@ test("Share Desk - Already shared", (done) => {
         done();
     });
 });
+
+test("Find desk - Unsuccessful", (done) => {
+    let sixDaysLater = moment().startOf("day").add(6, "days").format("YYYYMMDD");
+    const query = {
+        officeLocation: officeLocation,
+        date: sixDaysLater
+    };
+    desk.getDesks(query, (err) => {
+        expect(err).toBe(errcodes.NO_DESK_FOUND);
+        done();
+    });
+});
+
+test("Find desk - Successful", (done) => {
+    let fiveDaysLater = moment().startOf("day").add(5, "days").format("YYYYMMDD");
+    const query = {
+        officeLocation: officeLocation,
+        date: fiveDaysLater
+    };
+    desk.getDesks(query, (err, response) => {
+        expect(err).toBe(null);
+        expect(response.desks).toBeTruthy();
+        expect(response.desks.length).toBe(1);
+        done();
+    });
+});
