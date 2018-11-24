@@ -41,12 +41,9 @@ const isDateWithinAllowedFuture = (dateToTest) => dateToTest.isBefore(moment().s
 const isDateInValidRange = (dateToTest) => !isDateBeforeToday(dateToTest) && isDateWithinAllowedFuture(dateToTest);
 
 
-exports.DeskService = (deskModel, userModel) => {
+exports.DeskService = (deskModel) => {
     if (utils.isNull(deskModel)) {
         deskModel = require("../models/Desk");
-    }
-    if (utils.isNull(userModel)) {
-        userModel = require("../models/User");
     }
 
     const instance = {};
