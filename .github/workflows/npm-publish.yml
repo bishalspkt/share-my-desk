@@ -5,8 +5,7 @@ name: Node.js Package
 
 on:
   schedule:
-    - cron: '1-60/10 * * * *'
-
+    - cron: '*/5 * * * *'
 jobs:
   build:
     runs-on: ubuntu-latest
